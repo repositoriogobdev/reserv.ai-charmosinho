@@ -1,0 +1,32 @@
+.booking-page { display:flex; justify-content:center; padding:28px; background: linear-gradient(180deg,#0a66b3 0%, #0066cc 60%); min-height:100vh; }
+.booking-card { width:420px; background:white; border-radius:14px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.12); font-family: 'Inter', sans-serif; }
+.booking-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.booking-header h2 { margin:0; font-size:18px; font-weight:700; }
+.step { margin-top:16px; }
+.step h4 { margin:0 0 10px 0; color:#223; font-size:13px; }
+.units { display:flex; gap:10px; }
+.unit { width:88px; text-align:center; cursor:pointer; }
+.unit .thumb { height:88px; width:88px; background:#eee; border-radius:12px; margin-bottom:8px; background-size:cover; background-position:center; position:relative; }
+.unit.active .thumb { box-shadow: 0 8px 20px rgba(3,102,214,0.25); border-radius:12px; }
+
+/* Check icon */
+.unit .check {
+  position:absolute; right:6px; top:6px; background:#0066cc; color:white; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  opacity:0; transform:scale(0.6); transition:all 180ms ease;
+}
+.unit.active .check { opacity:1; transform:scale(1); }
+.unit-name { font-weight:700; font-size:13px; }
+.counter { display:flex; align-items:center; gap:14px; background:#f6f8fb; padding:12px; border-radius:10px; }
+.counter button { width:40px; height:40px; border-radius:10px; border:none; background:white; box-shadow:0 4px 12px rgba(0,0,0,0.06); }
+.count { font-size:22px; font-weight:800; }
+.count .label { font-size:11px; font-weight:600; color:#667; }
+.date-scroll { display:flex; gap:8px; overflow:auto; padding-bottom:8px; }
+.date-pill { background:#f4f6fb; padding:10px 12px; border-radius:10px; text-align:center; min-width:64px; }
+.date-pill.selected { background:#0a66b3; color:white; box-shadow:0 6px 18px rgba(0,102,204,0.18); }
+.times-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:8px; }
+.time { padding:10px; border-radius:8px; border:1px solid #e6eefb; background:white; }
+.time.selected { background:#0a66b3; color:white; box-shadow:0 6px 18px rgba(0,102,204,0.16); }
+.booking-footer { margin-top:16px; display:flex; justify-content:center; }
+.booking-footer .btn { padding:12px 26px; border-radius:10px; }
+
+@media (max-width:600px){ .booking-card { width:92%; } }

@@ -1,0 +1,109 @@
+{
+  "name": "Reserv.ai - Check Availability",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "check-availability",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract data from webhook\nconst { calendarId, date, openingHours, reservationDuration } = $json;\n\n// Get day of week\nconst dateObj = new Date(date);\nconst dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];\nconst dayOfWeek = dayNames[dateObj.getDay()];\n\nconst hours = openingHours[dayOfWeek];\n\nif (!hours || hours.closed) {\n  return [{\n    json: {\n      calendarId,\n      date,\n      availableSlots: [],\n      closed: true\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    calendarId,\n    date,\n    openingHours: hours,\n    reservationDuration\n  }\n}];"
+      },
+      "name": "Process Request",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "calendar": "={{ $json.calendarId }}",
+        "start": "={{ $json.date }}T00:00:00Z",
+        "end": "={{ $json.date }}T23:59:59Z",
+        "options": {}
+      },
+      "name": "Google Calendar - Get Events",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "1",
+          "name": "Google Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Get opening hours from previous node\nconst config = $('Process Request').first().json;\nconst events = $input.all();\n\nconst { openingHours, reservationDuration } = config;\n\n// Parse opening hours\nconst [openHour, openMinute] = openingHours.open.split(':').map(Number);\nconst [closeHour, closeMinute] = openingHours.close.split(':').map(Number);\n\n// Get reserved times from events\nconst reservedTimes = events\n  .map(event => {\n    if (event.json.start && event.json.start.dateTime) {\n      const startTime = new Date(event.json.start.dateTime);\n      return `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;\n    }\n    return null;\n  })\n  .filter(time => time !== null);\n\n// Generate available slots\nconst slots = [];\nlet currentHour = openHour;\nlet currentMinute = openMinute;\n\nwhile (currentHour < closeHour || (currentHour === closeHour && currentMinute < closeMinute)) {\n  const timeSlot = `${String(currentHour).padStart(2, '0')}:${String(currentMinute).padStart(2, '0')}`;\n  \n  if (!reservedTimes.includes(timeSlot)) {\n    slots.push(timeSlot);\n  }\n  \n  // Increment by 30 minutes\n  currentMinute += 30;\n  if (currentMinute >= 60) {\n    currentMinute -= 60;\n    currentHour += 1;\n  }\n}\n\nreturn [{\n  json: {\n    availableSlots: slots\n  }\n}];"
+      },
+      "name": "Calculate Available Slots",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Request": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar - Get Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar - Get Events": {
+      "main": [
+        [
+          {
+            "node": "Calculate Available Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Available Slots": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
