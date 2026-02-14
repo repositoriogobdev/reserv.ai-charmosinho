@@ -25,6 +25,7 @@ const Home = () => {
 
   const [errors, setErrors] = useState({});
   const [availability, setAvailability] = useState(null);
+  const [dailySlots, setDailySlots] = useState([]);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -60,6 +61,20 @@ const Home = () => {
     }
   }, []);
 
+  const loadDailySlots = useCallback(async (date) => {
+    if (!date || !selectedUnit) return;
+    setCheckingAvailability(true);
+    try {
+      const result = await reservationService.getAvailability(selectedUnit.id, date);
+      setDailySlots(result.slots || []);
+    } catch (error) {
+      console.error('❌ Erro ao carregar disponibilidade do dia:', error);
+      setDailySlots([]);
+    } finally {
+      setCheckingAvailability(false);
+    }
+  }, [selectedUnit]);
+
   // ====== VERIFICAR DISPONIBILIDADE ======
   const checkAvailability = useCallback(async (date, time) => {
     if (!date || !time || !selectedUnit) return;
@@ -91,6 +106,13 @@ const Home = () => {
   useEffect(() => {
     loadUnits();
   }, [loadUnits]);
+
+  // ====== VERIFICAR DISPONIBILIDADE QUANDO DATA MUDA ======
+  useEffect(() => {
+    if (formData.date && selectedUnit) {
+      loadDailySlots(formData.date);
+    }
+  }, [formData.date, selectedUnit, loadDailySlots]);
 
   // ====== VERIFICAR DISPONIBILIDADE QUANDO DATA/HORA MUDAM ======
   useEffect(() => {
@@ -366,17 +388,18 @@ const Home = () => {
             <div className="step">
               <h4>4. Horário Disponível</h4>
               <div className="times-grid">
-                {availableTimes.map(time => (
+                {(dailySlots.length ? dailySlots : availableTimes.map(time => ({ time, available: true }))).map(slot => (
                   <button
-                    key={time}
+                    key={slot.time}
                     type="button"
-                    className={`time ${formData.time === time ? 'selected' : ''}`}
+                    className={`time ${formData.time === slot.time ? 'selected' : ''}`}
+                    disabled={!slot.available}
                     onClick={() => {
-                      setFormData(prev => ({ ...prev, time }));
+                      setFormData(prev => ({ ...prev, time: slot.time }));
                       setErrors(prev => ({ ...prev, time: '' }));
                     }}
                   >
-                    {time}
+                    {slot.time}
                   </button>
                 ))}
               </div>
