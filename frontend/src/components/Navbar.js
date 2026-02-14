@@ -1,15 +1,9 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
-  const { user, logout, isAuthenticated, isOwner } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+  const { user, isAuthenticated } = useAuth();
 
   const currentDate = new Date().toLocaleDateString('pt-BR', {
     day: '2-digit',

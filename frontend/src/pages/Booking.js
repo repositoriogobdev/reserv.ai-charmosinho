@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import restaurantService from '../services/restaurantService';
 import reservationService from '../services/reservationService';
@@ -21,19 +21,7 @@ const Booking = () => {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    loadRestaurant();
-  }, [restaurantId]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (formData.date) {
-      loadAvailability();
-    }
-  }, [formData.date]);
-
-  const loadRestaurant = async () => {
+  const loadRestaurant = useCallback(async () => {
     try {
       const data = await restaurantService.getById(restaurantId);
       setRestaurant(data);
@@ -42,9 +30,9 @@ const Booking = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [restaurantId]);
 
-  const loadAvailability = async () => {
+  const loadAvailability = useCallback(async () => {
     try {
       const data = await reservationService.getAvailability(restaurantId, formData.date);
       setAvailableSlots(data.availableSlots || []);
@@ -52,7 +40,17 @@ const Booking = () => {
       console.error('Erro ao carregar disponibilidade:', error);
       setAvailableSlots([]);
     }
-  };
+  }, [restaurantId, formData.date]);
+
+  useEffect(() => {
+    loadRestaurant();
+  }, [loadRestaurant]);
+
+  useEffect(() => {
+    if (formData.date) {
+      loadAvailability();
+    }
+  }, [formData.date, loadAvailability]);
 
   const handleChange = (e) => {
     setFormData({

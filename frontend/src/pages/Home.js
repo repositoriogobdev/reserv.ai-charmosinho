@@ -47,18 +47,6 @@ const Home = () => {
     '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'
   ];
 
-  // ====== CARREGAR RESTAURANTES ======
-  useEffect(() => {
-    loadUnits();
-  }, [loadUnits]);
-
-  // ====== VERIFICAR DISPONIBILIDADE QUANDO DATA/HORA MUDAM ======
-  useEffect(() => {
-    if (formData.date && formData.time && selectedUnit) {
-      checkAvailability(formData.date, formData.time);
-    }
-  }, [formData.date, formData.time, selectedUnit, checkAvailability]);
-
   const loadUnits = useCallback(async () => {
     try {
       const data = await restaurantService.getAll();
@@ -98,6 +86,18 @@ const Home = () => {
       setCheckingAvailability(false);
     }
   }, [formData.numberOfPeople, selectedUnit]);
+
+  // ====== CARREGAR RESTAURANTES ======
+  useEffect(() => {
+    loadUnits();
+  }, [loadUnits]);
+
+  // ====== VERIFICAR DISPONIBILIDADE QUANDO DATA/HORA MUDAM ======
+  useEffect(() => {
+    if (formData.date && formData.time && selectedUnit) {
+      checkAvailability(formData.date, formData.time);
+    }
+  }, [formData.date, formData.time, selectedUnit, checkAvailability]);
 
   // ====== ATUALIZAR FORM ======
   const handleFormChange = (e) => {
