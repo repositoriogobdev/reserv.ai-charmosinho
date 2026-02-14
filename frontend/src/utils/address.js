@@ -2,7 +2,7 @@
 export function stripQuotes(s) {
   if (s === null || s === undefined) return '';
   try {
-    return String(s).replace(/^\"+|\"+$/g, '').trim();
+    return String(s).replace(/^"+|"+$/g, '').trim();
   } catch (e) {
     return String(s);
   }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import reservationService from '../services/reservationService';
 import restaurantService from '../services/restaurantService';
 import './backoffice.css';
@@ -11,11 +11,7 @@ const Reservations = () => {
   const [filterRestaurant, setFilterRestaurant] = useState('all');
   const [restaurantsList, setRestaurantsList] = useState([]);
 
-  useEffect(() => {
-    loadData();
-  }, [filterStatus, filterRestaurant]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const filters = {};
@@ -46,7 +42,11 @@ const Reservations = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterStatus, filterRestaurant]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleUpdateStatus = async (reservationId, newStatus) => {
     try {

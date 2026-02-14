@@ -21,7 +21,7 @@ const uploadService = {
       const fileName = `${restaurantId}-${timestamp}.${ext}`;
 
       // Upload para o storage
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('fotos-capa-unidades')
         .upload(fileName, file, {
           cacheControl: '3600',

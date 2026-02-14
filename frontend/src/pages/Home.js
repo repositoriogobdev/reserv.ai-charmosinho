@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import restaurantService from '../services/restaurantService';
 import reservationService from '../services/reservationService';
 import logo2 from '../assets/logo2.png';
@@ -50,16 +50,16 @@ const Home = () => {
   // ====== CARREGAR RESTAURANTES ======
   useEffect(() => {
     loadUnits();
-  }, []);
+  }, [loadUnits]);
 
   // ====== VERIFICAR DISPONIBILIDADE QUANDO DATA/HORA MUDAM ======
   useEffect(() => {
     if (formData.date && formData.time && selectedUnit) {
       checkAvailability(formData.date, formData.time);
     }
-  }, [formData.date, formData.time, selectedUnit]);
+  }, [formData.date, formData.time, selectedUnit, checkAvailability]);
 
-  const loadUnits = async () => {
+  const loadUnits = useCallback(async () => {
     try {
       const data = await restaurantService.getAll();
       console.log('✅ Restaurantes carregados:', data);
@@ -70,10 +70,10 @@ const Home = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // ====== VERIFICAR DISPONIBILIDADE ======
-  const checkAvailability = async (date, time) => {
+  const checkAvailability = useCallback(async (date, time) => {
     if (!date || !time || !selectedUnit) return;
 
     console.log('🔄 Iniciando verificação de disponibilidade...');
@@ -97,7 +97,7 @@ const Home = () => {
       console.log('✅ Finalizando verificação');
       setCheckingAvailability(false);
     }
-  };
+  }, [formData.numberOfPeople, selectedUnit]);
 
   // ====== ATUALIZAR FORM ======
   const handleFormChange = (e) => {

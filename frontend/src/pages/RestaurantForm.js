@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import restaurantService from '../services/restaurantService';
 import uploadService from '../services/uploadService';
@@ -38,16 +38,7 @@ const RestaurantForm = () => {
     }
   });
 
-  useEffect(() => {
-    // Proteger contra id indefinido/strings 'undefined' que podem vir da rota
-    if (id && id !== 'undefined') {
-      loadRestaurant();
-    } else if (id === 'undefined') {
-      setError('ID inválido fornecido na URL');
-    }
-  }, [id]);
-
-  const loadRestaurant = async () => {
+  const loadRestaurant = useCallback(async () => {
     try {
       if (!id || id === 'undefined') {
         throw new Error('ID inválido');
@@ -97,7 +88,16 @@ const RestaurantForm = () => {
       console.error('Erro ao carregar restaurante:', error.message);
       setError('Erro ao carregar restaurante');
     }
-  };
+  }, [id, formData.openingHours]);
+
+  useEffect(() => {
+    // Proteger contra id indefinido/strings 'undefined' que podem vir da rota
+    if (id && id !== 'undefined') {
+      loadRestaurant();
+    } else if (id === 'undefined') {
+      setError('ID inválido fornecido na URL');
+    }
+  }, [id, loadRestaurant]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
