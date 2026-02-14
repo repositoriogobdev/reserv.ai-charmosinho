@@ -32,10 +32,10 @@ const Home = () => {
   const getNextDates = () => {
     const dates = [];
     const today = new Date();
-    for (let i = 0; i < 6; i++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() + i);
-      dates.push(date);
+    const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+      dates.push(new Date(date));
     }
     return dates;
   };
