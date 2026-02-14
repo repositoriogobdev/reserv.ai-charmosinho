@@ -128,8 +128,8 @@ exports.getAvailability = async (req, res) => {
       new Date(date).toISOString().split('T')[0]
     );
 
-    // Gerar slots disponíveis baseado nas reservas existentes
-    const availableSlots = generateAvailableSlots(
+    // Gerar slots com disponibilidade baseada nas reservas existentes
+    const slots = generateAvailableSlots(
       restaurant.opening_hours,
       reservations,
       restaurant.reservation_duration,
@@ -142,7 +142,8 @@ exports.getAvailability = async (req, res) => {
         name: restaurant.name
       },
       date: date,
-      availableSlots: availableSlots
+      slots: slots,
+      availableSlots: slots.filter(slot => slot.available).map(slot => slot.time)
     });
   } catch (error) {
     console.error('Erro ao obter disponibilidade:', error);
@@ -172,10 +173,12 @@ function generateAvailableSlots(openingHours, reservations, duration, date) {
 
   while (currentHour < closeHour || (currentHour === closeHour && currentMinute < closeMinute)) {
     const timeSlot = `${String(currentHour).padStart(2, '0')}:${String(currentMinute).padStart(2, '0')}`;
-    
-    if (!reservedTimes.includes(timeSlot)) {
-      slots.push(timeSlot);
-    }
+    const available = !reservedTimes.includes(timeSlot);
+
+    slots.push({
+      time: timeSlot,
+      available
+    });
 
     currentMinute += 30; // Slots de 30 minutos
     if (currentMinute >= 60) {
