@@ -24,10 +24,18 @@
 .booking-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid #e6eefb;
+}
+
+.booking-header-logo {
+  height: 42px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
 }
 
 .booking-header-back {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import restaurantService from '../services/restaurantService';
 import reservationService from '../services/reservationService';
+import logo2 from '../assets/logo2.png';
 import './home-booking.css';
 
 const Home = () => {
@@ -256,6 +257,7 @@ const Home = () => {
         {/* HEADER */}
         <div className="booking-header">
           <h2>Agendamento de Reserva</h2>
+          <img className="booking-header-logo" src={logo2} alt="Logo" />
         </div>
 
         {/* ERRO GLOBAL */}

@@ -27,12 +27,16 @@ code {
 
 /* Main Content Area */
 main.app-main {
-  margin-left: 260px;
+  margin-left: 0;
   transition: margin-left 280ms cubic-bezier(0.4, 0, 0.2, 1);
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.App.has-sidebar main.app-main {
+  margin-left: 260px;
 }
 
 /* When Sidebar is Collapsed */
@@ -168,6 +172,116 @@ main.app-main {
   box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
 }
 
+/* Auth Pages */
+.auth-page {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px 48px;
+  background: linear-gradient(180deg, #f5f8fc 0%, #ffffff 100%);
+}
+
+.App:not(.has-sidebar) .auth-page {
+  min-height: 100vh;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 18px;
+  padding: 32px 28px;
+  box-shadow: 0 16px 40px rgba(3, 102, 214, 0.18);
+  border: 1px solid #e0e7ff;
+  text-align: center;
+}
+
+.auth-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.auth-logo img {
+  height: 90px;
+  width: auto;
+  object-fit: contain;
+}
+
+.auth-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #073763;
+  margin-bottom: 6px;
+}
+
+.auth-subtitle {
+  font-size: 14px;
+  color: #5b6f8f;
+  margin-bottom: 20px;
+}
+
+.auth-form {
+  text-align: left;
+}
+
+.auth-form .form-group label {
+  font-weight: 600;
+  color: #1f3b63;
+}
+
+.auth-form input {
+  border-radius: 10px;
+  border: 1.5px solid #d9e4ff;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 12px 18px;
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.auth-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #3f557a;
+  margin: 4px 0 12px;
+}
+
+.auth-remember input {
+  width: 16px;
+  height: 16px;
+}
+
+.auth-error {
+  padding: 10px 12px;
+  background: #ffebee;
+  color: #c62828;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .auth-card {
+    padding: 24px 20px;
+  }
+
+  .auth-logo img {
+    height: 74px;
+  }
+}
+
 .navbar-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -177,12 +291,106 @@ main.app-main {
   align-items: center;
 }
 
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .navbar-brand {
   font-size: 24px;
   font-weight: bold;
   color: white;
   text-decoration: none;
   letter-spacing: 0.5px;
+}
+
+.navbar-slogan {
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 6px 8px;
+  backdrop-filter: blur(6px);
+}
+
+.navbar-badge {
+  background: rgba(255, 255, 255, 0.22);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.navbar-date {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px 0 4px;
+}
+
+@media (max-width: 600px) {
+  .navbar-content {
+    align-items: flex-start;
+  }
+
+  .navbar-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .navbar-slogan {
+    font-size: 12px;
+  }
+
+  .navbar-actions {
+    align-items: flex-end;
+  }
+
+  .navbar-info {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    border-radius: 16px;
+    padding: 6px 10px;
+  }
+
+  .navbar-badge {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  .navbar-date {
+    font-size: 12px;
+    padding: 0;
+  }
 }
 
 .navbar-menu {

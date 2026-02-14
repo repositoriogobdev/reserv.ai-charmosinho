@@ -2,12 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Register from './pages/Register';
 import Booking from './pages/Booking';
 import Dashboard from './pages/Dashboard';
 import Restaurants from './pages/Restaurants';
@@ -83,11 +82,12 @@ const theme = createTheme({
 
 function AppLayout() {
   const location = useLocation();
-  // Mostrar Navbar/Sidebar apenas quando NÃO estivermos na página pública de reservas
-  const showNavbar = !location.pathname.startsWith('/reservas');
+  const { isAuthenticated } = useAuth();
+  // Mostrar Navbar/Sidebar apenas quando estiver autenticado
+  const showNavbar = isAuthenticated && !location.pathname.startsWith('/reservas');
 
   return (
-    <div className="App">
+    <div className={`App ${showNavbar ? 'has-sidebar' : ''}`}>
       {/* Mostrar sidebar na área de gerenciamento (não em /reservas) */}
       {showNavbar && <Sidebar />}
       
@@ -98,9 +98,8 @@ function AppLayout() {
         <Routes>
           <Route path="/reservas" element={<Home />} />
           {/* Rota raiz volta a apontar para a Home (área de gerenciamento). A página pública de reservas fica em /reservas */}
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route path="/booking/:restaurantId" element={<Booking />} />
           
           {/* Rotas protegidas */}
