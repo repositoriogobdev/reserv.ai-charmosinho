@@ -220,7 +220,7 @@ const Home = () => {
 
   // ====== CONVERTER DATA PARA FORMATO LEGÍVEL ======
   const formatDate = (date) => {
-    const days = ['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB', 'DOM'];
+    const days = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
     return {
       day: days[date.getDay()],
       date: String(date.getDate()).padStart(2, '0')
